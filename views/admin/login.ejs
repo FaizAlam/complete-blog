@@ -1,0 +1,54 @@
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+<link rel="stylesheet" href="/static/admin/css/login_styles.css">
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <!-- Tabs Titles -->
+
+    <!-- Icon -->
+    <div class="fadeIn first">
+      <img src="https://www.searchpng.com/wp-content/uploads/2019/02/User-Icon-PNG.png" id="icon" alt="User Icon" />
+    </div>
+
+    <!-- Login Form -->
+    <form onsubmit="return doLogin(this);" method="POST">
+    <div class="form-group">
+      <input type="email" name="email" id="login" class="fadeIn second" name="login" placeholder="Email">
+    </div>
+    <div class="form-group">
+      <input type="password" name="password" id="password" class="fadeIn third" name="login" placeholder="password">
+    </div>
+      <input type="submit" class="fadeIn fourth" value="Log In">
+    </form>
+
+    <!-- Remind Passowrd -->
+    <div id="formFooter">
+      <a class="underlineHover" href="#">Forgot Password?</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+        function doLogin(form){
+            $.ajax({
+                url:"/do-admin-login",
+                method:"POST",
+                data:{email:form.email.value,password:form.password.value},
+                success:function(response){
+                    if(response==""){
+                        alert("Wrong Creds");
+                    }else{
+                        alert("successfully logged in")
+                        window.location.href="/admin/dashboard";
+                    }
+                }
+            })
+
+        return false;
+        }
+        
+    
+</script>

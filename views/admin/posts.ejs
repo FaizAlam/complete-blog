@@ -1,0 +1,147 @@
+<%- include('./header')  %> 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+<div class="container-fluid" style="    left: 10%;
+margin-top: 2em;
+margin-bottom: 2em;width: 74%;position: relative;">
+    <form method="POST" onsubmit="return doPost(this);">
+        <div class="form-group">
+            <label for="">Title</label>
+            <input type="text" name="title" class="form-control" placeholder="Title">
+        </div>
+         <!--Buttom trigger modla-->
+         <button class="btn btn-primary " data-toggle="modal" data-target ="#myModal" type="button">
+            Upload image
+        </button>
+        <div class="form-group">
+            <label for="">Content</label>
+            <textarea type="text" name="content" class="form-control" placeholder="Content"></textarea>
+        </div>
+        
+        <input type="submit" class="btnn btn-info" value="Submit">
+    </form>
+
+    <table class="table table-striped">
+        <tr>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Image</th>
+            <th>Action</th>
+        </tr>
+        
+        <% blogs.forEach(function(blog){%>
+           <tr>
+               <td><%= blog.title  %> </td>
+               <td><%= blog.content %> </td>
+               <td>
+                   <img src="<%=blog.image %> " alt="" style="width:200px">
+               </td>
+               <td>
+                   <a href="/posts/edit/<%= blog._id %>" class="btn btn-warning btn-sm">
+                Edit</a>
+
+                    <button type="button" class="btn btn-danger btn-sm delete" data-id=<%=blog._id%>>
+                    Delete
+                    </button>
+               </td>
+           </tr>
+        <% }) %> 
+    </table>
+    
+    <div class="row">
+        <div class="col-sm-12">
+          <div class="preview-images"></div>
+        </div>
+      </div>
+</div>
+
+
+
+<script>
+    
+    function doPost(form){
+        const formData = {title:form.title.value,content:form.content.value,image:image};
+
+        jQuery.ajax({
+            url:"/do-post",
+            method:"POST",
+            data:{title:form.title.value,content:form.content.value,image:imagePath},
+            success:function(response){
+                alert('Data Inserted Successfully!')
+    
+            }
+        })
+        return false;
+    }
+
+
+</script>
+<script>
+
+    if(window.location.pathname == "/admin/posts"){
+        $ondelete = $("button.delete");
+        $ondelete.click(function(){
+            var id = $(this).attr("data-id")
+    
+            var request = {
+                "url" : `/do-delete/${id}`,
+                "method" : "DELETE"
+            }
+    
+            if(confirm("Do you really want to delete this record?")){
+                $.ajax(request).done(function(response){
+                    alert("Data Deleted Successfully!");
+                    location.reload();
+                })
+            }
+    
+        })
+    } 
+</script>
+
+ <!--Modal-->
+ <div class="modal face" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                
+                <h4 class="modal-title" id="myModalLabel">
+                    Upload Image
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    x
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" enctype="multipart/form-data" id="form-upload">
+                    <div class="form-group">
+                        <input type="file" name="file" class="form-control">
+                    </div>
+                    <input type="submit" class="btn btn-success" value="upload">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>   
+
+<script>
+    var imagePath = '';
+    $('#form-upload').on('submit',function(e){
+        e.preventDefault();
+        $.ajax({
+            url:"/do-upload-image",
+            method:"POST",
+            data:new FormData(this),
+            contentType:false,
+            cache:false,
+            processData:false,
+            success:function (response){
+                imagePath = response;
+                $("#myModal").modal("hide");
+            }
+
+        })
+    })
+</script>
+
+<%- include('./footer')  %> 

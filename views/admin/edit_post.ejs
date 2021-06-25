@@ -1,0 +1,94 @@
+<%- include('./header') %> 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="container-fluid" style="left: 10%;margin-top: 2em;margin-bottom: 2em;width: 74%;position: relative;">
+    <form method="POST" id="editPost" onsubmit="return doEditPost(this)">
+        <div class="form-group">
+            <label for="">Title</label>
+            <input type="text" name="title" class="form-control" value="<%=blog.title  %> ">
+        </div>
+         <!--Buttom trigger modla-->
+         <button class="btn btn-primary " data-toggle="modal" data-target ="#myModal" type="button">
+            Update image
+        </button>
+
+        <div class="form-group">
+            <label for="">Content</label>
+            <textarea type="text" name="content" class="form-control" placeholder="Content"><%= blog.content %> </textarea>
+        </div>
+        
+        <input type="submit" class="btnn btn-warning" value="Edit">
+    </form>
+</div>
+
+
+ <!--Modal-->
+ <div class="modal face" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                
+                <h4 class="modal-title" id="myModalLabel">
+                    Upload Image
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    x
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" enctype="multipart/form-data" id="form-upload">
+                    <input type="hidden" name="image" value="<%= blog.image %> ">
+                    <div class="form-group">
+                        <input type="file" name="file" class="form-control">
+                    </div>
+                    <input type="submit" class="btn btn-success" value="upload">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>   
+
+<script>
+
+    const image = '<%= blog.image %> '
+
+    function doEditPost(form){
+        const formData = {
+            title:form.title.value,
+            content:form.content.value,
+            image:image 
+            };
+        $.ajax({
+            url:`/do-edit-post/<%=blog._id  %> `,
+            method:"PUT",
+            data:formData,
+            success:function(response){
+                alert(response)
+            }
+
+        })
+        return false;
+    }
+    //NOT RUNNING
+    $('#form-upload').on('submit',function(e){
+        e.preventDefault();
+        $.ajax({
+            url:`/do-update-image/<%= blog._id %> `,
+            method:"PUT",
+            data:new FormData(this),
+            contentType:false,
+            cache:false,
+            processData:false,
+            success:function (response){
+                imagePath = response;
+                $("#myModal").modal("hide");
+            }
+
+        })
+    })
+
+</script>
+
+    
+
+<%- include('./footer')  %> 
+
